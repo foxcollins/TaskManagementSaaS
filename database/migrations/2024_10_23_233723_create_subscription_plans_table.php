@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('duration'); // Duración del plan en días (por ejemplo, 30, 365, etc.)
             $table->string('currency', 3)->default('USD'); // Moneda, por defecto USD
             $table->boolean('is_active')->default(true); // Si el plan está activo o no
+            $table->integer('task_limit')->nullable();
             $table->text('features')->nullable(); // Puedes almacenar características como JSON o en texto plano
             $table->timestamps();
         });

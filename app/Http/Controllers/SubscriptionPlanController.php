@@ -20,8 +20,8 @@ class SubscriptionPlanController extends BaseController
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
-            'duration' => 'required|string',
-            'features' => 'required|string',
+            'duration' => 'required|integer',
+            'task_limit'=>'required|integer',
         ]);
 
         if ($validator->fails()) {
@@ -46,10 +46,10 @@ class SubscriptionPlanController extends BaseController
     {
         // Validar la solicitud
         $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|required|string|max:255',
-            'price' => 'sometimes|required|numeric',
-            'duration' => 'sometimes|required|string',
-            'features' => 'sometimes|required|string',
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric',
+            'duration' => 'required|integer',
+            'task_limit' => 'required|integer',
         ]);
 
         if ($validator->fails()) {

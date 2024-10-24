@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
 use App\Models\User;
+use App\Models\SubscriptionPlan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
+use Carbon\Carbon;
 
 class RegisterController extends BaseController
 {
@@ -32,11 +34,25 @@ class RegisterController extends BaseController
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
-        $success['token'] =  $user->createToken(env('APP_NAME'),['*'], now()->addDay())->plainTextToken;
-        $success['name'] =  $user->name;
 
-        return $this->sendResponse($success, 'User register successfully.');
+        // Asignar el plan "Free" al nuevo usuario
+        $freePlan = SubscriptionPlan::where('name', 'Free')->first();
+        if ($freePlan) {
+            $user->subscriptions()->create([
+                'plan_id' => $freePlan->id,
+                'starts_at' => Carbon::now(), // Fecha de inicio
+                'ends_at' => Carbon::now()->addDays($freePlan->duration), // Fecha de finalización
+                'task_limit' => $freePlan->task_limit,
+            ]);
+        }
+
+        // Crear el token para el nuevo usuario
+        $success['token'] = $user->createToken(env('APP_NAME'), ['*'], now()->addDay())->plainTextToken;
+        $success['name'] = $user->name;
+
+        return $this->sendResponse($success, 'User registered successfully.');
     }
+
 
     /**
      * Login api

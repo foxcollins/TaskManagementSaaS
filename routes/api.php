@@ -4,7 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SubscriptionPlanController;
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -36,6 +38,12 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/subscription-plans', [SubscriptionPlanController::class, 'store']);
     Route::put('/subscription-plans/{plan}', [SubscriptionPlanController::class, 'update']);
     Route::delete('/subscription-plans/{plan}', [SubscriptionPlanController::class, 'destroy']);
+});
+
+//rutas para las subcripciones dle usuario
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/subscriptions', [SubscriptionController::class, 'index']);
+    Route::post('/subscriptions', [SubscriptionController::class, 'subscribe']);
 });
 
 
