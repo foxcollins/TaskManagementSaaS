@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SubscriptionPlanController;
@@ -14,7 +15,7 @@ Route::get('/user', function (Request $request) {
 
 Route::controller(RegisterController::class)->group(function () {
     Route::post('register', 'register');
-    Route::post('login', 'login');
+    Route::post('login-api', 'login');
 });
 
 ///rutas APIFirst
@@ -25,7 +26,9 @@ Route::middleware(['auth:sanctum', 'api-auth'])->group(function () {
     Route::get('/tasks/{task}', [TaskController::class, 'show']);
     Route::put('/tasks/{task}', [TaskController::class, 'update']);
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy']);
-   
+    Route::controller(RegisterController::class)->group(function () {
+        Route::get('user-data', 'userData');
+    });
     
 });
 
@@ -33,6 +36,15 @@ Route::middleware(['auth:sanctum', 'api-auth'])->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('subscription-plans', [SubscriptionPlanController::class, 'index']);
     Route::get('subscription-plans/{id}', [SubscriptionPlanController::class, 'show']);
+
+    //rutas para las subcripciones dle usuario
+    Route::get('/subscriptions', [SubscriptionController::class, 'index']);
+    Route::post('/subscriptions', [SubscriptionController::class, 'subscribe']);
+
+    //rutas para el payment
+    Route::post('/paypal/payment', [PaymentController::class, 'createPayment'])->name('paypal.payment');
+    Route::get('/paypal/success', [PaymentController::class, 'success'])->name('paypal.success');
+    Route::get('/paypal/cancel', [PaymentController::class, 'cancel'])->name('paypal.cancel');
 });
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/subscription-plans', [SubscriptionPlanController::class, 'store']);
@@ -40,10 +52,12 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::delete('/subscription-plans/{plan}', [SubscriptionPlanController::class, 'destroy']);
 });
 
-//rutas para las subcripciones dle usuario
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/subscriptions', [SubscriptionController::class, 'index']);
-    Route::post('/subscriptions', [SubscriptionController::class, 'subscribe']);
+//ruta para checktoken
+Route::middleware('api-auth')->get('/protected-route', function () {
+    
+    return response()->json(['message' => 'You have access to this protected route.'], 200);
 });
+
+
 
 

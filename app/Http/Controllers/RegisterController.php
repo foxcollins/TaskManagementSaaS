@@ -27,8 +27,16 @@ class RegisterController extends BaseController
             'c_password' => 'required|same:password',
         ]);
 
-        if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors());
+         if ($validator->fails()) {
+            $errors = $validator->errors();
+
+            // Si el email ya ha sido tomado
+            if ($errors->has('email')) {
+                return $this->sendError('The email has already been taken.', [], 422);
+            }
+
+            // Retornar otros errores si existen
+            return $this->sendError('Validation Error.', $errors, 422);
         }
 
         $input = $request->all();
@@ -63,13 +71,34 @@ class RegisterController extends BaseController
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
-            $user->tokens()->delete();
+            //$user->tokens()->delete();
             $success['token'] =  $user->createToken(env('APP_NAME'),['*'], now()->addDay())->plainTextToken;
             $success['name'] =  $user->name;
 
             return $this->sendResponse($success, 'User login successfully.');
         } else {
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
+            return $this->sendError('Unauthorised Credentials.', ['error' => 'Unauthorised Credentials']);
         }
     }
+
+    public function userData()
+    {
+        // Obtener el usuario autenticado
+        $user = User::find(Auth::id());
+
+        // Verificar si el usuario existe
+        if (!$user) {
+            return $this->sendError('User not found.', [], 404);
+        }
+
+        // Devolver solo los datos relevantes del usuario
+        return $this->sendResponse([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'currentSubscription'=>$user->currentSubscription(),
+            // Puedes agregar más campos aquí si es necesario
+        ], 'User Data retrieved successfully.', 200);
+    }
+
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
@@ -71,7 +72,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function subscriptions()
+    public function subscriptions(): HasMany
     {
         return $this->hasMany(UserSubscription::class);
     }
@@ -94,10 +95,11 @@ class User extends Authenticatable
         }
         
         // Obtén los detalles del plan
-        $subscriptionPlan = SubscriptionPlan::find($subscription->id);
+        $subscriptionPlan = SubscriptionPlan::find($subscription->plan_id);
         // Retorna un array con el nombre del plan y las limitaciones
         $isExpired = Carbon::now()->greaterThan($subscription->ends_at);
         return [
+            'plan_id' => $subscription->plan_id,
             'plan_name' => $subscriptionPlan->name,
             'description' => $subscriptionPlan->description,
             'price' => $subscriptionPlan->price,

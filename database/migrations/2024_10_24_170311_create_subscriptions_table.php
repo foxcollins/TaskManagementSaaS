@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('plan_id')->constrained('subscription_plans')->onDelete('cascade');
+            $table->foreignId('previous_plan_id')->nullable()->constrained('subscription_plans')->onDelete('set null');
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('ends_at')->nullable();
+            $table->timestamp('canceled_at')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
