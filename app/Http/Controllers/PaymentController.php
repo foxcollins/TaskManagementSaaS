@@ -7,6 +7,7 @@ use App\Services\PayPalService;
 use Illuminate\Support\Facades\Validator;
 use App\Models\UserSubscription;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends BaseController
 {
@@ -79,5 +80,19 @@ class PaymentController extends BaseController
                 ],
             ],
         ];
+    }
+
+    public function payments()
+    {
+        $payments = UserSubscription::with(['plan', 'user'])
+        ->where('user_id',Auth::id())
+        ->orderBy('id','desc')
+        ->get();
+
+        if($payments){
+            return $this->sendResponse($payments, 'Payment list successfully.', 200);
+        }else{
+            return $this->sendError('Payment list failed.', null , 400);
+        }
     }
 }

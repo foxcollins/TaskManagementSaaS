@@ -24,26 +24,29 @@ class SubscriptionPlanSeeder extends Seeder
             [
                 'name' => 'Basic',
                 'description' => 'Basic plan with limited features',
-                'price' => 9.99,
+                'price' => 10,
                 'duration' => 30, // 30 días
                 'currency' => 'USD',
                 'task_limit' => 50, // Límite de tareas para usuarios básicos
+                'paypal_plan_id' => 'P-6380937539222452XM4OJAMY',
             ],
             [
                 'name' => 'Pro',
                 'description' => 'Pro plan with additional features',
-                'price' => 29.99,
+                'price' => 40,
                 'duration' => 30, // 30 días
                 'currency' => 'USD',
                 'task_limit' => 200, // Límite de tareas para usuarios Pro
+                'paypal_plan_id'=> 'P-5WX76056P55192714M4OJA5A',
             ],
             [
                 'name' => 'Enterprise',
                 'description' => 'Enterprise plan with all features',
-                'price' => 99.99,
+                'price' => 120,
                 'duration' => 365, // 1 año
                 'currency' => 'USD',
                 'task_limit' => 1000, // Límite de tareas para usuarios Enterprise
+                'paypal_plan_id' => 'P-8GR2684655586822FM4OJBUI',
             ],
         ];
 

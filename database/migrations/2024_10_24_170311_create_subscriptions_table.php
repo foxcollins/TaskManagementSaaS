@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('plan_id')->constrained('subscription_plans')->onDelete('cascade');
             $table->foreignId('previous_plan_id')->nullable()->constrained('subscription_plans')->onDelete('set null');
+            $table->string('paypal_subscription_id')->nullable();
+            $table->string('paypal_plan_id')->nullable();
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('ends_at')->nullable();
             $table->timestamp('canceled_at')->nullable();

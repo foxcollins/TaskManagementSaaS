@@ -2,7 +2,7 @@
     <header class="p-3 bg-primary bg-gradient text-white">
     <div class="container">
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+        <a href="/home" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
           <img src="{{asset('images/logo.png')}}" alt="" width="100">
         </a>
 
@@ -15,15 +15,19 @@
         <div class="text-end">
             <div class="flex-shrink-0 dropdown">
                 <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+                  @if (Laravel\Jetstream\Jetstream::managesProfilePhotos() && isset($user['profile_photo_url']) )
+                    <img src="{{ $user['profile_photo_url'] }}"  alt="{{ $user['name'] }}" width="32" height="32" class="rounded-circle object-cover">
+                  @else
+                    <img src="https://i.pinimg.com/736x/dc/9c/61/dc9c614e3007080a5aff36aebb949474.jpg"  alt="{{ $user['name'] }}" width="32" height="32" class="rounded-circle object-cover">
+                  @endif
                 </a>
                 <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
                     <li class="text-center"><h6 class="dropdown-header">¡Hola, <span class="text-capitalice">{{$user['name']}}</span>!</h6></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-clock-rotate-left"></i> Historial</a></li>
-                    <li><a class="dropdown-item" href="{{route('profile.show')}}"><i class="fa-solid fa-id-badge"></i> Perfil</a></li>
+                    <li><a class="dropdown-item" href="{{route('payments')}}"><i class="fa-solid fa-clock-rotate-left"></i> Payment History</a></li>
+                    <li><a class="dropdown-item" href="{{route('profile.show')}}"><i class="fa-solid fa-id-badge"></i> Account</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
+                    <li><a class="dropdown-item" href="{{route('logout')}}"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
                 </ul>
             </div>
         </div>

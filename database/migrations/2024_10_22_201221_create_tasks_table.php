@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('priority')->default('low');//low - medium - high - urgent
-            $table->boolean('completed')->default(false);
+            $table->string('status')->default('pending');
+            $table->integer('order')->default(0);
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

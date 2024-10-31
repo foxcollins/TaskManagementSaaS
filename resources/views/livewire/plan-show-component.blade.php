@@ -38,7 +38,7 @@
                         @if($plan['id'] === $user['currentSubscription']['plan_id'])
                             <button type="button" class="w-100 btn btn-lg btn-outline-primary disabled">Plan Actual</button>
                         @else
-                            <button wire:click="confirmPlan" class=" btn btn-lg btn-outline-primary">Confirmar plan</button>
+                            <button wire:click="confirmPlan({{$plan['id']}})" class=" btn btn-lg btn-outline-primary">Confirmar plan</button>
                         @endif
                     </div>
                 </div>

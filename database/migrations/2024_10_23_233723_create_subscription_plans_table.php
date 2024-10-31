@@ -21,6 +21,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true); // Si el plan está activo o no
             $table->integer('task_limit')->nullable();
             $table->text('features')->nullable(); // Puedes almacenar características como JSON o en texto plano
+            $table->string('paypal_plan_id')->nullable();
             $table->timestamps();
         });
     }

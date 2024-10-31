@@ -18,7 +18,10 @@ class UserSubscription extends Model
         'starts_at',
         'ends_at',
         'is_active',
-        'canceled_at'
+        'canceled_at',
+        'previuos_plan_id',
+        'paypal_subscription_id',
+        'paypal_plan_id'
     ];
     protected $casts = [
         'starts_at' => 'datetime',

@@ -96,6 +96,7 @@ class RegisterController extends BaseController
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
+            'profile_photo_url'=>$user->profile_photo_url,
             'currentSubscription'=>$user->currentSubscription(),
             // Puedes agregar más campos aquí si es necesario
         ], 'User Data retrieved successfully.', 200);

@@ -77,6 +77,11 @@ class User extends Authenticatable
         return $this->hasMany(UserSubscription::class);
     }
 
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
+    }
+
 
 
     ///metods
@@ -111,5 +116,16 @@ class User extends Authenticatable
             'ends_at' => $subscription->ends_at,
             'is_expired' => $isExpired
         ];
+    }
+
+    public function hasReachedTaskLimit()
+    {
+        // Asume que el usuario tiene una relación 'subscription' que contiene el plan actual
+        $taskLimit = $this->currentSubscription()['task_limit'];
+
+        // Cuenta las tareas activas del usuario
+        $currentTaskCount = $this->tasks()->count();
+
+        return $currentTaskCount >= $taskLimit;
     }
 }

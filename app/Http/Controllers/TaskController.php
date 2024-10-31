@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log; 
+
 
 class TaskController extends BaseController
 {
@@ -19,36 +23,42 @@ class TaskController extends BaseController
         return $this->sendResponse($tasks, 'Tasks successfully ', 200);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         try {
-            // Realiza la validación manual
-            $validator = Validator::make($request->all(), [
+            $user = Auth::user();
+            // Verifica si el usuario ha alcanzado el límite de tareas
+            if ($user->hasReachedTaskLimit()) {
+                return response()->json([
+                    'success' => false,
+                    'taskLimit'=>true,
+                    'message' => 'Has alcanzado el límite de tareas para tu plan.'
+                ], 403);
+            }
+            
+            //Validación de datos
+            $request->validate([
                 'title' => 'required|string|max:255',
                 'description' => 'nullable|string',
-                'priority' => 'required|in:low,medium,high,urgent',
             ]);
 
-            // Si la validación falla, retorna los errores
-            if ($validator->fails()) {
-                return $this->sendError('Validation Error.', $validator->errors(), 422);
-            }
-
-            // Si la validación es exitosa, crea la tarea
+            // Crear la tarea
             $task = Task::create([
                 'title' => $request->title,
-                'description' => $request->description,
-                'priority'  => $request->priority,
-                'user_id' => Auth::id(),
+                'description' => $request->description ?? null,
+                'priority'  => $request->priority ?? "low",
+                'status' => Task::STATUS_PENDING,
+                'user_id' => $user->id,
             ]);
 
-            // Retorna la respuesta exitosa con el objeto task
+            // Respuesta exitosa
             return $this->sendResponse($task, 'Task created successfully.', 201);
         } catch (\Exception $e) {
-            // Manejo de errores en caso de que ocurra una excepción
+            // Manejo de errores
             return $this->sendError('Task creation failed.', ['error' => $e->getMessage()], 500);
         }
     }
+
 
 
     public function show(Task $task)
@@ -75,12 +85,10 @@ class TaskController extends BaseController
             if (!$task) {
                 return $this->sendError('Task not found.', [], 404);
             }
-            $this->authorize('update', $task);
+            //$this->authorize('update', $task);
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string|max:255',
                 'description' => 'nullable|string',
-                'priority' => 'required|in:low,medium,high,urgent',
-                'completed' => 'boolean',
             ]);
 
             if ($validator->fails()) {
@@ -88,11 +96,11 @@ class TaskController extends BaseController
             }
 
             // Actualizar la tarea con los datos validados
-            $task->update($request->only('title', 'description', 'priority', 'completed'));
-
-            return $this->sendResponse($task, 'Task updated successfully.', 200);
+            $task->update($request->only('title', 'description', 'order', 'status'));
+            Log::info(['TaskController - Update'=>$task]);
+            return $this->sendResponse($task, 'Task updated successfully.', 201);
         } catch (Exception $e) {
-            
+            Log::info(['TasksController - UpdateTask'=>json_encode($e)]);
             return $this->sendError('Task update failed.', ['error' => $e->getMessage()], 500);
         }
     }
@@ -105,6 +113,34 @@ class TaskController extends BaseController
             return $this->sendResponse([], 'Task deleted successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Task could not be deleted.', ['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function changeStatus(Request $request, $id)
+    {
+        try {
+
+            $task = Task::find($id);
+            if (!$task) {
+                return $this->sendError('Task not found.', [], 404);
+            }
+            //$this->authorize('update', $task);
+            $validator = Validator::make($request->all(), [
+                'status' => 'string',
+                'order' =>'integer'
+            ]);
+
+            if ($validator->fails()) {
+                return $this->sendError('Validation Error.', $validator->errors(), 422);
+            }
+
+            // Actualizar la tarea con los datos validados
+            $task->update($request->only('status','order'));
+            Log::info(['TaskController - Update' => $task]);
+            return $this->sendResponse($task, 'Task updated successfully.', 200);
+        } catch (Exception $e) {
+
+            return $this->sendError('Task update failed.', ['error' => $e->getMessage()], 500);
         }
     }
 }
