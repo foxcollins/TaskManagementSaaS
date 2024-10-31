@@ -34,8 +34,8 @@ Esta es una aplicación de Gestión de Tareas desarrollada como prueba técnica 
 1. **Clonar el repositorio**
 
    ```bash
-   git clone https://github.com/tu_usuario/task-management-saas.git
-   cd task-management-saas
+   git clone https://github.com/foxcollins/TaskManagementSaaS
+   cd taskmanagement
 
 
 2. **Instalación de dependencias**
@@ -94,7 +94,7 @@ Inicia el servidor de desarrollo:
 
 ## Tecnologías Utilizadas
     - Backend: Laravel 11, Livewire 3
-    - Frontend: Tailwind CSS, Sortable.js, Toastr
+    - Frontend: Bootstrap CSS, Sortable.js, Toastr, Sweetaleer2.js
     - API de Pagos: PayPal (srmklive/paypal)
     - API de Sugerencias: OpenAI GPT API
 
