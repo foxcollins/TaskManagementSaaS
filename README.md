@@ -1,55 +1,112 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Task Management SaaS Application
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Esta es una aplicación de Gestión de Tareas desarrollada como prueba técnica para un sistema SaaS. La aplicación permite a los usuarios gestionar sus tareas y aprovechar funcionalidades de suscripción y sugerencias de IA. 
 
-## About Laravel
+## Características
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1. **Autenticación y Registro de Usuarios**
+   - Inicio de sesión y registro de usuarios mediante autenticación API First.
+   - Integración con Laravel Jetstream y manejo de sesiones en el frontend con Livewire.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+2. **Gestión de Tareas**
+   - Crear, editar y eliminar tareas con un flujo sencillo de UI en tiempo real.
+   - Posibilidad de cambiar el estado de las tareas (`pending`, `in_progress`, `completed`) mediante un sistema de arrastrar y soltar usando `Sortable.js`.
+   - Límites de tareas en función del plan de suscripción del usuario (gratuito y premium).
+   - Sugerencias de títulos y descripciones de tareas mediante la API de ChatGPT.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+3. **Sistema de Suscripción**
+   - Planes de suscripción gestionados a través de PayPal y `srmklive/paypal`.
+   - Asignación de planes gratuitos por defecto y control de tareas limitado según el plan del usuario.
+   - Rutas de retorno (`success` y `cancel`) para el proceso de suscripción con PayPal.
+   - Gestión de la suscripción en el backend con historial de planes y la posibilidad de cancelar y cambiar suscripciones.
 
-## Learning Laravel
+4. **Interfaz de Usuario (Frontend)**
+   - Frontend interactivo y dinámico utilizando Livewire 3 y Tailwind CSS.
+   - Componentes personalizados para la lista de tareas, vista de planes y cabecera con datos del usuario.
+   - Integración de notificaciones `Toastr` para mensajes en tiempo real.
+   
+5. **API de Sugerencias IA**
+   - Integración con la API de OpenAI para sugerencias de títulos y descripciones de tareas.
+   - Límite de uso de la API configurado para evitar sobrecargar el límite de cuota.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Configuración del Proyecto
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+1. **Clonar el repositorio**
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+   ```bash
+   git clone https://github.com/tu_usuario/task-management-saas.git
+   cd task-management-saas
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+2. **Instalación de dependencias**
+    ```bash
+    composer install
+    npm install && npm run dev
 
-### Premium Partners
+3. **Configuración del archivo .env**
+    ```bash
+    cp .env.example .env
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Luego, configura los siguientes parámetros:
 
-## Contributing
+## Base de datos: Define los datos de tu base de datos (DB_DATABASE, DB_USERNAME, DB_PASSWORD).
+## Clave API de OpenAI: Obtén la clave en OpenAI y configúrala.
+## Credenciales de PayPal: Agrega las credenciales de srmklive/paypal en modo de desarrollo.
+
+4. **Generar la clave de la aplicación y migrar la base de datos**
+    ```bash
+    php artisan key:generate
+    php artisan migrate --seed
+
+5. **Configurar Laragon (opcional)**
+
+    Si usas Laragon, configura la URL para la aplicación en el archivo .env:
+    ```plaintext
+    APP_URL=https://taskmanagement.mn/
+
+
+## Ejecución del Proyecto
+Inicia el servidor de desarrollo:
+    ```bash
+    php artisan serve
+
+
+## Funcionalidades en Detalle
+1. **Arrastrar y Soltar Tareas**
+
+    - Las tareas pueden moverse entre columnas de estado (pending, in_progress, completed) utilizando Sortable.js.
+    - Después de mover una tarea, el estado se actualiza en el backend manteniendo la posición actual.
+    - Limitación de Tareas según Suscripción
+
+2. **Control de la cantidad de tareas disponibles para cada tipo de plan (gratuito/premium).**
+    - Mensaje de alerta al usuario cuando se alcanza el límite de tareas.
+    - Sugerencias de Títulos y Descripciones con OpenAI
+
+3. **La API de OpenAI proporciona sugerencias de título y descripción mientras el usuario escribe.**
+    - Configurado para limitar el número de llamadas a la API según el límite de uso gratuito.
+    - Endpoints y API
+    - La aplicación sigue un enfoque API First para la mayoría de sus funcionalidades. Aquí algunos endpoints destacados:
+
+4. **Usuarios: /api/users - Registro y autenticación de usuarios.**
+    - Tareas: /api/tasks - CRUD de tareas.
+    - Suscripciones: /api/subscriptions - Gestión de planes y suscripciones.
+
+
+## Tecnologías Utilizadas
+    - Backend: Laravel 11, Livewire 3
+    - Frontend: Tailwind CSS, Sortable.js, Toastr
+    - API de Pagos: PayPal (srmklive/paypal)
+    - API de Sugerencias: OpenAI GPT API
+
+
+## Contribuciones
+    Las contribuciones son bienvenidas. Por favor, sigue estos pasos para colaborar:
+
+    Fork el proyecto.
+    Crea una nueva rama (git checkout -b feature/nueva-feature).
+    Realiza tu commit (git commit -am 'Añade una nueva feature').
+    Haz push de la rama (git push origin feature/nueva-feature).
+    Abre un Pull Request.
 
 Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 

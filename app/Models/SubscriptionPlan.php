@@ -16,6 +16,9 @@ class SubscriptionPlan extends Model
         'duration',
         'currency',
         'is_active',
+        'task_limit',
+        'features'
+
     ];
 
     public function getDurationInDaysAttribute()

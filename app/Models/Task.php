@@ -12,7 +12,8 @@ class Task extends Model
         'title',
         'description',
         'priority',
-        'completed',
+        'status',
+        'order',
         'user_id',
     ];
 
@@ -21,4 +22,8 @@ class Task extends Model
     const PRIORITY_MEDIUM = 'medium';
     const PRIORITY_HIGH = 'high';
     const PRIORITY_URGENT = 'urgent';
+
+    const STATUS_PENDING = 'pending';
+    const STATUS_IN_PROGRESS = 'in_progress';
+    const STATUS_COMPLETED = 'completed';
 }
