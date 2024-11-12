@@ -4,7 +4,7 @@
         <button @click="$dispatch('openTaskCreateModal')" type="button" class="btn btn-primary"><i class="fa-solid fa-plus"></i></button>
     </div>
     <!-- Modal para Crear Tarea -->
-    <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true" wire:ignore>
+    <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true" wire:ignore.self>
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -15,23 +15,32 @@
                     <form wire:submit.prevent="saveTask">
                         <div class="mb-3">
                             <label for="title" class="form-label">Nombre de la Tarea</label>
-                            <input type="text" wire:model.live="title" class="form-control" id="title" required >
-                            <ul class="suggestions-list" wire:loading.remove>
-                                @if ($suggestions)
-                                    @foreach ($suggestions as $suggestion)
-                                        <li wire:click="selectSuggestion('{{ $suggestion }}')" style="cursor: pointer;">
-                                            {{ $suggestion }}
-                                        </li>
-                                    @endforeach
-                                @endif
-                            </ul>
+                            <input type="text" wire:model.live="title" class="form-control" id="title" required>
+                                <ul class="suggestions-list" wire:loading.remove>
+                                    @if (!empty($suggestions))
+                                        @foreach ($suggestions as $suggestion)
+                                            <li wire:click="selectSuggestion('{{ addslashes($suggestion) }}')" style="cursor: pointer;">
+                                                {{ $suggestion }}
+                                            </li>
+                                        @endforeach
+                                    @endif
+                                </ul>
                             <div>
                                 @error('title') <span class="error">{{ $message }}</span> @enderror 
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Descripción</label>
-                            <textarea wire:model="description" class="form-control" id="description" required></textarea>
+                            <textarea wire:model.live="description" class="form-control" id="description" required></textarea>
+                            <ul class="suggestions-list" wire:loading.remove>
+                                    @if (!empty($suggestionsDescription))
+                                        @foreach ($suggestionsDescription as $suggestionDes)
+                                            <li wire:click="selectSuggestionDescription('{{ addslashes($suggestionDes) }}')" style="cursor: pointer;">
+                                                {{ $suggestionDes }}
+                                            </li>
+                                        @endforeach
+                                    @endif
+                                </ul>
                             <div>
                                 @error('description') <span class="error">{{ $message }}</span> @enderror 
                             </div>
@@ -53,9 +62,12 @@
         max-height: 200px;
         overflow-y: auto;
     }
-    .suggestions-list li {
+        .suggestions-list li {
         padding: 10px;
-        background-color: white;
+        background-color: #fff;
+        border: 1px solid #ddd; /* Borde para confirmar que existen */
+        display: block;
+        color: #000;
     }
     .suggestions-list li:hover {
         background-color: #f0f0f0;
@@ -87,8 +99,13 @@
 </script>
 <script>
     function selectSuggestion(suggestion) {
-        @this.set('titleInput', suggestion); // Completar el título en Livewire
+        @this.set('title', suggestion); // Completar el título en Livewire
         suggestions = []; // Limpiar las sugerencias
+    }
+
+    function selectSuggestionDescription(suggestion) {
+        @this.set('description', suggestion); // Completar el título en Livewire
+        suggestionsDescription = []; // Limpiar las sugerencias
     }
 </script>
 @endscript

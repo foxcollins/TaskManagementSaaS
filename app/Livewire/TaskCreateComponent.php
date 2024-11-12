@@ -13,7 +13,8 @@ class TaskCreateComponent extends Component
     public $title;
     #[Validate('required')] 
     public $description;
-    public $suggestions = [];
+    public $suggestions;
+    public $suggestionsDescription;
 
     protected $listeners = ['openTaskCreateModal' => 'showModal'];
 
@@ -76,29 +77,55 @@ class TaskCreateComponent extends Component
     public function updatingTitle($value)
     {
         if (strlen($value) > 2) { // Cambia el límite según necesites
-            //$this->fetchSuggestions($value , 'title');
+            $this->fetchSuggestions($value , 'title',null);
         } else {
-            //$this->suggestions = []; // Limpiar las sugerencias si el input es corto
+            $this->suggestions = []; // Limpiar las sugerencias si el input es corto
         }
         
     }
 
-    public function fetchSuggestions($input,$type)
+    public function updatingDescription($value)
+    {
+        if (strlen($value) > 2) { // Cambia el límite según necesites
+            $this->fetchSuggestions($value, 'description',$this->title);
+        } else {
+            $this->suggestionsDescription = []; // Limpiar las sugerencias si el input es corto
+        }
+    }
+
+    public function fetchSuggestions($input,$type,$title=null)
     {
         try {
-            $response = $this->apiClient2()->post("suggest}", [
-                'json' => [
-                    'prompt' => $input,
-                    'type' => $type
-                ],
-            ]);
-            dd($response->getStatusCode());
+            if($title==null && $type=='title'){
+                $response = $this->apiClient2()->post("suggest", [
+                    'json' => [
+                        'prompt' => $input,
+                        'type' => $type
+                    ],
+                ]);
+            }else{
+                $response = $this->apiClient2()->post("suggest/desc", [
+                    'json' => [
+                        'prompt' => $input,
+                        'type' => $type,
+                        'title' => $title
+                    ],
+                ]);
+            }
+            
             if ($response->getStatusCode() === 200) {
                 $responseBody = json_decode($response->getBody()->getContents(), true);
-                //$this->suggestions = explode("\n", $response->json('suggestion')); // Asegúrate de que sea un array
-                dd($responseBody);
+                if($type=='title'){
+                    $this->suggestions = array_values(array_filter(array_map('trim', explode("\n", $responseBody['data'])), function ($line) {
+                        return !empty($line) && strlen($line) > 3; // Filtrar líneas vacías o muy cortas
+                    }));
+                }elseif($type == "description"){
+                    $this->suggestionsDescription = array_values(array_filter(array_map('trim', explode("\n", $responseBody['data'])), function ($line) {
+                        return !empty($line) && strlen($line) > 3; // Filtrar líneas vacías o muy cortas
+                    }));
+                }
             } else {
-                $this->suggestions = [];
+                $this->suggestionsDescription = $this->suggestions = [];
             }
         } catch (\Exception $e) {
             \Log::error('Error fetching suggestions', ['error' => $e]);
@@ -112,8 +139,14 @@ class TaskCreateComponent extends Component
         $this->suggestions = []; // Limpiar las sugerencias después de seleccionar
     }
 
+    public function selectSuggestionDescription($suggestion)
+    {
+        $this->description = $suggestion;
+        $this->suggestionsDescription = []; // Limpiar las sugerencias después de seleccionar
+    }
+
     public function render()
     {
-        return view('livewire.task-create-component');
+        return view('livewire.task-create-component',['suggestions'=>$this->suggestions]);
     }
 }

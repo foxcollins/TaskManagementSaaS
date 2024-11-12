@@ -3,7 +3,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-around">
                 <div class="">
-                    <b>Creadas {{$tasks->count()}} de {{session('userData')['currentSubscription']['task_limit']}} <small>Tareas</small></b>
+                    <b>Creadas {{$tasks->count()}} de {{session('userData')['currentSubscription']['task_limit']}} <small>Tareas</small></b> 
                 </div>
                 <div class="col-8 d-flex justify-content-end">
                     @livewire('task-create-component')

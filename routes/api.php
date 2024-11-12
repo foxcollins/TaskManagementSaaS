@@ -31,6 +31,7 @@ Route::middleware(['auth:sanctum', 'api-auth'])->group(function () {
 
     //ruta extra para usar OpenAI API
     Route::post('/suggest', [OpenAIController::class, 'suggest']);
+    Route::post('/suggest/desc', [OpenAIController::class, 'suggestDescription']);
     
     Route::controller(RegisterController::class)->group(function () {
         Route::get('user-data', 'userData');
